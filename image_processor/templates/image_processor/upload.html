@@ -63,12 +63,14 @@
                         <thead>
                             <tr>
                                 <th>KOL Matched!!</th>
+                                <th>Link KOL Tiktok</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for row in top_10_results %}
                                 <tr>
-                                    <td style="width: 300px;">{{ row.MatchedName }}</td> {# row.1 คือค่าจากคอลัมน์ที่ 1 (index 1) ใน DataFrame #}
+                                    <td style="width: 300px;">{{ row.MatchedName }}</td>
+                                    <td style="width: 300px;">{{ row.URLs }}</td> {# row.1 คือค่าจากคอลัมน์ที่ 1 (index 1) ใน DataFrame #}
                                 </tr>
                             {% endfor %}
                         </tbody>
