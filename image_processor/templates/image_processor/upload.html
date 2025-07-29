@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>อัปโหลดรูปภาพและค้นหา</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; color: #333; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #0056b3; text-align: center; margin-bottom: 25px;}
+        form { margin-bottom: 30px; text-align: center;}
+        input[type="file"] { border: 1px solid #ddd; padding: 8px; border-radius: 4px; display: inline-block; margin-right: 10px; }
+        button { background-color: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease; }
+        button:hover { background-color: #218838; }
+        .image-display { text-align: center; margin-top: 20px; }
+        .image-display img { max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px; }
+        .results { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
+        h2 { color: #0056b3; margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #e2e2e2; }
+        .error-message { color: red; text-align: center; margin-top: 20px; font-weight: bold; }
+        .info-box { background-color: #e0f7fa; border-left: 5px solid #00bcd4; padding: 15px; margin-top: 20px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Matching KOL</h1>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="image_file" accept="image/*" required>
+            <button type="submit">Upload</button>
+        </form>
+
+        {% if error_message %}
+            <p class="error-message">{{ error_message }}</p>
+        {% endif %}
+
+        {% if image_url %}
+            <div class="image-display">
+                <h2>Uploaded Image:</h2>
+                <img src="{{ image_url }}" alt="Uploaded Image">
+            </div>
+
+            <div class="results info-box">
+                <h2>VLM Auto Generated Caption:</h2>
+                <p>{{ caption_text }}</p>
+
+                <h2>NLP results:</h2>
+                {% if nlp_processed_data %}
+                    <p><strong>Keywords:</strong> {{ nlp_processed_data.Keywords|join:", " }}</p>
+                    <p><strong>Category:</strong> {{ nlp_processed_data.Category|join:", " }}</p>
+                {% else %}
+                    <p>ไม่สามารถประมวลผล NLP ได้</p>
+                {% endif %}
+            </div>
+
+            {% if top_10_results %}
+                <div class="results">
+                    <h2>Top 10 Best KOL:</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>KOL Matched!!</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in top_10_results %}
+                                <tr>
+                                    <td style="width: 300px;">{{ row.MatchedName }}</td> {# row.1 คือค่าจากคอลัมน์ที่ 1 (index 1) ใน DataFrame #}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% elif not error_message %}
+                <p class="results">ไม่พบข้อมูลที่ตรงกับรูปภาพของคุณ</p>
+            {% endif %}
+
+        {% endif %}
+    </div>
+</body>
+</html>
