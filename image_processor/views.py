@@ -16,11 +16,11 @@ try:
     model = AutoModelForVision2Seq.from_pretrained("Salesforce/blip2-opt-2.7b")
     kw_model = KeyBERT() # spacy.load("en_core_web_sm") ไม่ได้ใช้โดยตรงใน KeyBERT
     
-    # Path ที่ถูกต้องสำหรับไฟล์ CSV
-    # keywords_csv_path = os.path.join(settings.BASE_DIR, 'image_processor', 'data', 'keywords.csv')
-    # dataset_csv_path = os.path.join(settings.BASE_DIR, 'image_processor', 'data', 'Dataset.csv')
-    keywords_csv_path = "C:\\Users\\AbelH\\Documents\\AI project\\Ai_tiktok\\image_processor\\data\\keywords.csv"
-    dataset_csv_path = "C:\\Users\\AbelH\\Documents\\AI project\\Ai_tiktok\\image_processor\\data\\Dataset.csv"
+    Path ที่ถูกต้องสำหรับไฟล์ CSV
+    keywords_csv_path = os.path.join(settings.BASE_DIR, 'image_processor', 'data', 'keywords.csv')
+    dataset_csv_path = os.path.join(settings.BASE_DIR, 'image_processor', 'data', 'Dataset.csv')
+    # keywords_csv_path = "C:\\Users\\AbelH\\Documents\\AI project\\Ai_tiktok\\image_processor\\data\\keywords.csv"
+    # dataset_csv_path = "C:\\Users\\AbelH\\Documents\\AI project\\Ai_tiktok\\image_processor\\data\\Dataset.csv"
     csv_file_keyword = pd.read_csv(keywords_csv_path)
     df_dataset = pd.read_csv(dataset_csv_path) # โหลด dataset ครั้งเดียว
     
@@ -88,7 +88,7 @@ def matching(result):
     ranked_df = matched_df.sort_values(by="score", ascending=False)
     
     ranked_df = matched_df.sort_values(by="score", ascending=False)
-    top_10 = ranked_df.iloc[:10, [1]]
+    top_10 = ranked_df.iloc[:10, [1, 12]]
 
     return top_10
 
@@ -121,7 +121,7 @@ def upload_image(request):
                     top_10 = matching(nlp_processed_data)
                     if not top_10.empty:
                         # แปลง DataFrame เป็น list ของ dictionaries เพื่อให้ส่งไปที่ template ได้ง่ายขึ้น
-                        top_10.columns = ['MatchedName']
+                        top_10.columns = ['MatchedName', 'URLs']
                         top_10_results = top_10.to_dict('records')
                     else:
                         error_message = "ไม่พบข้อมูลที่ตรงกันจากฐานข้อมูล"
